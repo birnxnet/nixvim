@@ -10,6 +10,7 @@
   extraPackages = lib.mkIf config.plugins.blink-cmp.enable (
     with pkgs;
     [
+      # ui-git
       # blink-cmp-git
       gh
       # blink-cmp-dictionary
