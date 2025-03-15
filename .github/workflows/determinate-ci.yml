@@ -16,3 +16,12 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    with:
+      visibility: private
+      runner-map: |
+        {
+          "x86_64-linux": "buntu1"
+        }
+      enable-ssh-agent: true
+    secrets:
+      ssh-private-key: ${{ secrets.ss }}
