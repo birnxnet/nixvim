@@ -21,7 +21,7 @@ on:
         type: string
         default: |
           {
-            "x86_64-linux": "ubuntu-64"
+            "x86_64-linux": "buntu1"
           }
     outputs:
       flake_name:
