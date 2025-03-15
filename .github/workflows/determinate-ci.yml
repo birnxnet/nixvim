@@ -22,6 +22,3 @@ jobs:
         {
           "x86_64-linux": "buntu1"
         }
-      enable-ssh-agent: true
-    secrets:
-      ssh-private-key: ${{ secrets.ss }}
