@@ -21,11 +21,7 @@ on:
         type: string
         default: |
           {
-            "aarch64-darwin": "macos-latest",
-            "x86_64-darwin": "macos-latest",
-            "x86_64-linux": "ubuntu-64",
-            "i686-linux": "ubuntu-64",
-            "aarch64-linux": "ubuntu-24.04-arm"
+            "x86_64-linux": "ubuntu-64"
           }
     outputs:
       flake_name:
