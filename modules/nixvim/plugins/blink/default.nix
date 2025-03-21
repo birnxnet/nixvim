@@ -1,9 +1,7 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   ...
 }:
 {
@@ -28,7 +26,6 @@
     {
       blink-cmp = {
         enable = true;
-        package = inputs.blink-cmp.packages.${system}.default;
 
         # TODO: fix fuzzy library check with lazy loading
         # plugin searches `start` instead of `opt` in pack
@@ -140,9 +137,6 @@
                 "spell"
                 # FIXME: locking up nvim
                 # "ripgrep"
-                # Cmp sources
-                # TODO: migrate when available
-                "calc"
               ]
               ++ lib.optionals config.plugins.avante.enable [
                 "avante"
@@ -217,14 +211,6 @@
                   };
                 };
               }
-              // lib.optionalAttrs config.plugins.blink-compat.enable {
-                # Cmp sources
-                calc = {
-                  name = "calc";
-                  module = "blink.compat.source";
-                  score_offset = 2;
-                };
-              }
               // lib.optionalAttrs config.plugins.avante.enable {
                 avante = {
                   module = "blink-cmp-avante";
@@ -242,20 +228,6 @@
       blink-copilot.enable = true;
       blink-emoji.enable = true;
       blink-ripgrep.enable = true;
-
-      blink-compat = {
-        enable = true;
-
-        settings = {
-          # When wanted
-          # debug = true;
-          # NOTE: apparently just doesn't work without using lazy...
-          # impersonate_nvim_cmp = true;
-        };
-      };
     }
-    (lib.mkIf config.plugins.blink-cmp.enable {
-      cmp-calc.enable = true;
-    })
   ];
 }
