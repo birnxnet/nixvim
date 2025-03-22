@@ -50,13 +50,13 @@
               };
 
               # navigate to left/right window
-              "<leader>[" = {
+              "<C-h>" = {
                 action = "<C-w>h";
                 options = {
                   desc = "Left window";
                 };
               };
-              "<leader>]" = {
+              "<C-l>" = {
                 action = "<C-w>l";
                 options = {
                   desc = "Right window";
@@ -91,10 +91,10 @@
                 action = "<cmd>resize +2<CR>";
               };
               "<C-Left>" = {
-                action = "<cmd>vertical resize +2<CR>";
+                action = "<cmd>vertical resize +5<CR>";
               };
               "<C-Right>" = {
-                action = "<cmd>vertical resize -2<CR>";
+                action = "<cmd>vertical resize -5<CR>";
               };
 
               # move current line up/down
