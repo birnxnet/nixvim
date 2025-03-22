@@ -5,7 +5,7 @@
 }:
 {
   imports = [
-    ./bufremove.nix
+    # ./bufremove.nix
     ./comment.nix
     ./diff.nix
     ./files.nix
