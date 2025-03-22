@@ -2,7 +2,7 @@
 {
   plugins = {
     mini = {
-      enable = true;
+      enable = false;
 
       modules = {
         # Only enable if we arent using snacks bufdelete
