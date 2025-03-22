@@ -23,8 +23,8 @@ on:
           {
             "aarch64-darwin": "macos-latest",
             "x86_64-darwin": "macos-latest",
-            "x86_64-linux": "ubuntu-64",
-            "i686-linux": "ubuntu-64",
+            "x86_64-linux": "buntu1",
+            "i686-linux": "buntu1",
             "aarch64-linux": "ubuntu-24.04-arm"
           }
     outputs:
