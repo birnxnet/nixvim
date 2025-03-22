@@ -381,12 +381,12 @@
             "<C-k>" = {
               action = "<C-o>gk";
             };
-            "<C-h>" = {
-              action = "<Left>";
-            };
-            "<C-l>" = {
-              action = "<Right>";
-            };
+            # "<C-h>" = {
+            #   action = "<Left>";
+            # };
+            # "<C-l>" = {
+            #   action = "<Right>";
+            # };
             "<C-j>" = {
               action = "<C-o>gj";
             };
