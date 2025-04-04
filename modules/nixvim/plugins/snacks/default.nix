@@ -2,6 +2,7 @@
   config,
   self,
   system,
+  pkgs,
   ...
 }:
 {
@@ -17,12 +18,22 @@
     ./zen.nix
   ];
 
+  extraPackages = with pkgs; [
+    # PDF rendering
+    ghostscript
+    # Mermaid diagrams
+    mermaid-cli
+    # LaTeX
+    tectonic
+  ];
+
   plugins = {
     snacks = {
       enable = true;
       package = self.packages.${system}.snacks-nvim;
 
       settings = {
+        image.enabled = true;
         indent.enabled = true;
         scroll.enabled = true;
         statuscolumn = {

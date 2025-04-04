@@ -91,14 +91,17 @@
           fish = [ "fish_indent" ];
           fsharp = [ "fantomas" ];
           gdscript = [ "gdformat" ];
+          go = [ "golines" ];
           java = [ "google-java-format" ];
           javascript = {
-            __unkeyed-1 = "biome";
-            __unkeyed-2 = "prettierd";
+            __unkeyed-1 = "prettierd";
+            __unkeyed-2 = "biome";
             timeout_ms = 2000;
             stop_after_first = true;
           };
           json = [ "jq" ];
+          html = [ "prettierd" ];
+          kdl = [ "kdlfmt" ];
           lua = [ "stylua" ];
           markdown = [ "deno_fmt" ];
           nix = [ "nixfmt" ];
@@ -117,8 +120,8 @@
           terraform = [ "terraform_fmt" ];
           toml = [ "taplo" ];
           typescript = {
-            __unkeyed-1 = "biome";
-            __unkeyed-2 = "prettierd";
+            __unkeyed-1 = "prettierd";
+            __unkeyed-2 = "biome";
             timeout_ms = 2000;
             stop_after_first = true;
           };
@@ -142,7 +145,10 @@
             env = {
               BIOME_CONFIG_PATH = pkgs.writeTextFile {
                 name = "biome.json";
-                text = lib.generators.toJSON { } { formatter.useEditorconfig = true; };
+                text = lib.generators.toJSON { } {
+                  "$schema" = "${pkgs.biome}/node_modules/@biomejs/biome/configuration_schema.json";
+                  formatter.useEditorconfig = true;
+                };
               };
             };
           };
@@ -152,9 +158,11 @@
           deno_fmt.command = lib.getExe pkgs.deno;
           fantomas.command = lib.getExe pkgs.fantomas;
           gdformat.command = lib.getExe' pkgs.gdtoolkit_4 "gdformat";
+          golines.command = lib.getExe pkgs.golines;
           google-java-format.command = lib.getExe pkgs.google-java-format;
           isort.command = lib.getExe pkgs.isort;
           jq.command = lib.getExe pkgs.jq;
+          kdlfmt.command = lib.getExe pkgs.kdlfmt;
           nixfmt.command = lib.getExe pkgs.nixfmt-rfc-style;
           prettierd.command = lib.getExe pkgs.prettierd;
           ruff.command = lib.getExe pkgs.ruff;

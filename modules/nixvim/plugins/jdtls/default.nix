@@ -1,59 +1,62 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }:
 {
-  extraConfigLuaPre =
-    let
-      java-debug = "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server";
-      java-test = "${pkgs.vscode-extensions.vscjava.vscode-java-test}/share/vscode/extensions/vscjava.vscode-java-test/server";
-    in
-    lib.mkIf config.plugins.nvim-jdtls.enable ''
-      local jdtls = require("jdtls")
-      local jdtls_dap = require("jdtls.dap")
-      local jdtls_setup = require("jdtls.setup")
-
-      _M.jdtls = {}
-      _M.jdtls.bundles = {}
-
-      local java_debug_bundle = vim.split(vim.fn.glob("${java-debug}" .. "/*.jar"), "\n")
-      local java_test_bundle = vim.split(vim.fn.glob("${java-test}" .. "/*.jar", true), "\n")
-
-      -- add jars to the bundle list if there are any
-      if java_debug_bundle[1] ~= "" then
-          vim.list_extend(_M.jdtls.bundles, java_debug_bundle)
-      end
-
-      if java_test_bundle[1] ~= "" then
-          vim.list_extend(_M.jdtls.bundles, java_test_bundle)
-      end
-    '';
-
   plugins = {
-    nvim-jdtls = {
+    jdtls = {
       enable = true;
 
-      # TODO: upgrade to mkNeoVimPlugin
-      # lazyLoad = {
-      #   enable = true;
-      #   settings = {
-      #     ft = "java";
-      #   };
-      # };
+      lazyLoad.settings.ft = "java";
 
-      configuration.__raw = ''vim.fn.stdpath 'cache' .. "/jdtls/config"'';
-      data.__raw = "vim.fn.stdpath 'cache' .. '/jdtls/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t')";
-      initOptions = {
-        bundles.__raw = "_M.jdtls.bundles";
-        # FIXME: not working
-        # bundles = {
-        #   __unkeyed-1.__raw = ''vim.fn.glob("${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-*.jar", 1)'';
-        #   __unkeyed-2.__raw = ''vim.split(vim.fn.glob("${pkgs.vscode-extensions.vscjava.vscode-java-test}/share/vscode/extensions/vscjava.vscode-java-test/server/*.jar", 1), "\n")'';
-        # };
-      };
+      luaConfig.pre =
+        let
+          java-debug = "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server";
+          java-test = "${pkgs.vscode-extensions.vscjava.vscode-java-test}/share/vscode/extensions/vscjava.vscode-java-test/server";
+        in
+        # Lua
+        ''
+          local jdtls = require("jdtls")
+          local jdtls_dap = require("jdtls.dap")
+          local jdtls_setup = require("jdtls.setup")
+
+          _M.jdtls = {}
+          _M.jdtls.bundles = {}
+
+          local java_debug_bundle = vim.split(vim.fn.glob("${java-debug}" .. "/*.jar"), "\n")
+          local java_test_bundle = vim.split(vim.fn.glob("${java-test}" .. "/*.jar", true), "\n")
+
+          -- add jars to the bundle list if there are any
+          if java_debug_bundle[1] ~= "" then
+              vim.list_extend(_M.jdtls.bundles, java_debug_bundle)
+          end
+
+          if java_test_bundle[1] ~= "" then
+              vim.list_extend(_M.jdtls.bundles, java_test_bundle)
+          end
+        '';
+
       settings = {
+        cmd = [
+          "${lib.getExe pkgs.jdt-language-server}"
+          "-data"
+          ''vim.fn.stdpath 'cache' .. '/jdtls/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t')''
+          "-configuration"
+          ''vim.fn.stdpath 'cache' .. "/jdtls/config"''
+        ];
+
+        init_options = {
+          bundles.__raw = "_M.jdtls.bundles";
+          # FIXME: not working
+          # bundles = {
+          #   __unkeyed-1.__raw = ''vim.fn.glob("${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-*.jar", 1)'';
+          #   __unkeyed-2.__raw = ''vim.split(vim.fn.glob("${pkgs.vscode-extensions.vscjava.vscode-java-test}/share/vscode/extensions/vscjava.vscode-java-test/server/*.jar", 1), "\n")'';
+          # };
+        };
+
+        root_dir.__raw = "require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})";
+
         java = {
           configuration = {
             updateBuildConfiguration = "interactive";
@@ -151,5 +154,4 @@
       };
     };
   };
-
 }

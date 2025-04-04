@@ -10,8 +10,9 @@
           end
         '';
         cmd = [
-          "DapVirtualTextToggle"
           "DapVirtualTextEnable"
+          "DapVirtualTextForceRefresh"
+          "DapVirtualTextToggle"
         ];
       };
     };

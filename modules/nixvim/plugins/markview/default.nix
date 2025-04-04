@@ -1,37 +1,57 @@
-{ pkgs, ... }:
+{ config, lib, ... }:
 {
-  plugins.markview = {
-    enable = true;
-    package = pkgs.vimPlugins.markview-nvim.overrideAttrs {
-      version = "2025-01-30";
-      src = pkgs.fetchFromGitHub {
-        owner = "OXY2DEV";
-        repo = "markview.nvim";
-        rev = "f933b4597738fec4014d25f11511bcbe2d1e1a32";
-        hash = "sha256-V3imWAzPtlrC89CYigDvnye12CctM7RJioigc57Rn/8=";
-        fetchSubmodules = true;
+  plugins.markview =
+    let
+      filetypes = [
+        "Avante"
+        "codecompanion"
+        "latex"
+        "markdown"
+        "md"
+        "norg"
+        "org"
+        "quarto"
+        "rmd"
+        "typst"
+        "vimwiki"
+      ];
+    in
+    {
+      enable = true;
+
+      lazyLoad.settings.ft = filetypes;
+
+      settings = {
+        preview = {
+          inherit filetypes;
+
+          ignore_buftypes = [ ];
+
+          condition.__raw = ''
+            function (buffer)
+               local ft, bt = vim.bo[buffer].ft, vim.bo[buffer].bt;
+
+               if bt == "nofile" and (ft == "Avante" or ft == "codecompanion") then
+                    return true;
+               elseif bt == "nofile" then
+                    return false;
+               else
+                    return true;
+               end
+            end
+          '';
+        };
       };
-      doCheck = false;
     };
 
-    lazyLoad.settings.ft = "markdown";
-
-    settings = {
-      buf_ignore = [ ];
-
-      preview = {
-        modes = [
-          "n"
-          "x"
-          "i"
-          "r"
-        ];
-
-        hybrid_modes = [
-          "i"
-          "r"
-        ];
+  keymaps = lib.mkIf config.plugins.markview.enable [
+    {
+      mode = "n";
+      key = "<leader>um";
+      action = "<cmd>Markview toggle<CR>";
+      options = {
+        desc = "Toggle Markdown Preview";
       };
-    };
-  };
+    }
+  ];
 }

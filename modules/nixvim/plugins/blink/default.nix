@@ -1,9 +1,7 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
-  system,
   ...
 }:
 {
@@ -15,6 +13,8 @@
       gh
       # blink-cmp-dictionary
       wordnet
+      # blink use for gitlab ?
+      glab
     ]
   );
 
@@ -28,16 +28,19 @@
     {
       blink-cmp = {
         enable = true;
-        package = inputs.blink-cmp.packages.${system}.default;
 
-        # TODO: fix fuzzy library check with lazy loading
-        # plugin searches `start` instead of `opt` in pack
-        # lazyLoad.settings.event = [
-        #   "InsertEnter"
-        #   "CmdlineEnter"
-        # ];
+        lazyLoad.settings.event = [
+          "InsertEnter"
+          "CmdlineEnter"
+        ];
 
         settings = {
+          cmdline = {
+            completion.menu.auto_show = true;
+            keymap = {
+              preset = "inherit";
+            };
+          };
           completion = {
             ghost_text.enabled = true;
             documentation = {
@@ -100,22 +103,24 @@
           };
           keymap = {
             preset = "enter";
-            "<A-Tab>" = [
-              "snippet_forward"
-              "fallback"
-            ];
-            "<A-S-Tab>" = [
-              "snippet_backward"
-              "fallback"
-            ];
-            "<Tab>" = [
-              "select_next"
-              "fallback"
-            ];
-            "<S-Tab>" = [
-              "select_prev"
-              "fallback"
-            ];
+            # NOTE: If you prefer Tab/S-Tab selection
+            # But, find myself accidentally interrupting tabbing for movement
+            # "<A-Tab>" = [
+            #   "snippet_forward"
+            #   "fallback"
+            # ];
+            # "<A-S-Tab>" = [
+            #   "snippet_backward"
+            #   "fallback"
+            # ];
+            # "<Tab>" = [
+            #   "select_next"
+            #   "fallback"
+            # ];
+            # "<S-Tab>" = [
+            #   "select_prev"
+            #   "fallback"
+            # ];
           };
           signature = {
             enabled = true;
@@ -123,114 +128,142 @@
           };
           snippets.preset = "mini_snippets";
           sources = {
-            default =
-              [
-                # BUILT-IN SOURCES
-                "buffer"
-                "lsp"
-                "path"
-                "snippets"
-                # Community
-                "copilot"
-                "conventional_commits"
-                "dictionary"
-                "emoji"
-                "git"
-                "nerdfont"
-                "spell"
-                # FIXME: locking up nvim
-                # "ripgrep"
-                # Cmp sources
-                # TODO: migrate when available
-                "calc"
-              ]
-              ++ lib.optionals config.plugins.avante.enable [
-                "avante"
-              ];
-            providers =
-              {
-                # BUILT-IN SOURCES
-                lsp.score_offset = 4;
-                # Community sources
-                copilot = {
-                  name = "copilot";
-                  module = "blink-copilot";
-                  async = true;
-                  score_offset = 100;
-                };
-                conventional_commits = {
-                  name = "Conventional Commits";
-                  module = "blink-cmp-conventional-commits";
-                  enabled.__raw = ''
-                    function()
-                      return vim.bo.filetype == 'gitcommit'
-                    end
-                  '';
-                };
-                dictionary = {
-                  name = "Dict";
-                  module = "blink-cmp-dictionary";
-                  min_keyword_length = 3;
-                };
-                emoji = {
-                  name = "Emoji";
-                  module = "blink-emoji";
-                  score_offset = 1;
-                };
-                git = {
-                  name = "Git";
-                  module = "blink-cmp-git";
-                  enabled = true;
-                  score_offset = 100;
-                  should_show_items.__raw = ''
-                    function()
-                      return vim.o.filetype == 'gitcommit' or vim.o.filetype == 'markdown'
-                    end
-                  '';
-                  opts = {
-                    git_centers = {
-                      github = {
-                        issue = {
-                          on_error.__raw = "function(_,_) return true end";
-                        };
+            default.__raw = ''
+              function(ctx)
+                -- Base sources that are always available
+                local base_sources = { 'buffer', 'lsp', 'path', 'snippets' }
+
+                -- Build common sources list dynamically based on enabled plugins
+                local common_sources = vim.deepcopy(base_sources)
+
+                -- Add optional sources based on plugin availability
+                ${lib.optionalString config.plugins.copilot-lua.enable "table.insert(common_sources, 'copilot')"}
+                ${lib.optionalString config.plugins.blink-cmp-dictionary.enable "table.insert(common_sources, 'dictionary')"}
+                ${lib.optionalString config.plugins.blink-emoji.enable "table.insert(common_sources, 'emoji')"}
+                ${lib.optionalString (lib.elem pkgs.vimPlugins.blink-nerdfont-nvim config.extraPlugins) "table.insert(common_sources, 'nerdfont')"}
+                ${lib.optionalString config.plugins.blink-cmp-spell.enable "table.insert(common_sources, 'spell')"}
+                ${lib.optionalString config.plugins.blink-ripgrep.enable "table.insert(common_sources, 'ripgrep')"}
+
+                -- Special context handling
+                local success, node = pcall(vim.treesitter.get_node)
+                if success and node and vim.tbl_contains({ 'comment', 'line_comment', 'block_comment' }, node:type()) then
+                  return { 'buffer', 'spell', 'dictionary' }
+                elseif vim.bo.filetype == 'gitcommit' then
+                  local git_sources = { 'buffer', 'spell', 'dictionary' }
+                  ${lib.optionalString config.plugins.blink-cmp-git.enable "table.insert(git_sources, 'git')"}
+                  ${lib.optionalString (lib.elem pkgs.vimPlugins.blink-cmp-conventional-commits config.extraPlugins) "table.insert(git_sources, 'conventional_commits')"}
+                  return git_sources
+                ${lib.optionalString config.plugins.avante.enable # Lua
+                  ''
+                    elseif vim.bo.filetype == 'AvanteInput' then
+                      return { 'buffer', 'avante' }
+                  ''
+                }
+                ${lib.optionalString config.plugins.easy-dotnet.enable # Lua
+                  ''
+                    elseif vim.bo.filetype == "cs" or vim.bo.filetype == "fsharp" or vim.bo.filetype == "vb" or vim.bo.filetype == "razor" or vim.bo.filetype == "xml" then
+                      -- For .NET filetypes, add easy-dotnet to the sources
+                      local dotnet_sources = vim.deepcopy(common_sources)
+                      table.insert(dotnet_sources, 'easy-dotnet')
+                      return dotnet_sources
+                  ''
+                }
+                else
+                  return common_sources
+                end
+              end
+            '';
+            providers = {
+              # BUILT-IN SOURCES
+              lsp.score_offset = 4;
+              # Community sources
+              copilot = lib.mkIf config.plugins.copilot-lua.enable {
+                name = "copilot";
+                module = "blink-copilot";
+                async = true;
+                score_offset = 100;
+              };
+              conventional_commits =
+                lib.mkIf (lib.elem pkgs.vimPlugins.blink-cmp-conventional-commits config.extraPlugins)
+                  {
+                    name = "Conventional Commits";
+                    module = "blink-cmp-conventional-commits";
+                    enabled.__raw = ''
+                      function()
+                        return vim.bo.filetype == 'gitcommit'
+                      end
+                    '';
+                  };
+              dictionary = lib.mkIf config.plugins.blink-cmp-dictionary.enable {
+                name = "Dict";
+                module = "blink-cmp-dictionary";
+                min_keyword_length = 3;
+              };
+              emoji = lib.mkIf config.plugins.blink-emoji.enable {
+                name = "Emoji";
+                module = "blink-emoji";
+                score_offset = 1;
+              };
+              git = lib.mkIf config.plugins.blink-cmp-git.enable {
+                name = "Git";
+                module = "blink-cmp-git";
+                enabled = true;
+                score_offset = 100;
+                should_show_items.__raw = ''
+                  function()
+                    return vim.o.filetype == 'gitcommit' or vim.o.filetype == 'markdown'
+                  end
+                '';
+                opts = {
+                  git_centers = {
+                    github = {
+                      issue = {
+                        on_error.__raw = "function(_,_) return true end";
                       };
                     };
                   };
                 };
-                ripgrep = {
-                  name = "Ripgrep";
-                  module = "blink-ripgrep";
-                  async = true;
-                  score_offset = 1;
-                };
-                spell = {
-                  name = "Spell";
-                  module = "blink-cmp-spell";
-                  score_offset = 1;
-                };
-                nerdfont = {
-                  module = "blink-nerdfont";
-                  name = "Nerd Fonts";
-                  score_offset = 15;
-                  opts = {
-                    insert = true;
-                  };
-                };
-              }
-              // lib.optionalAttrs config.plugins.blink-compat.enable {
-                # Cmp sources
-                calc = {
-                  name = "calc";
-                  module = "blink.compat.source";
-                  score_offset = 2;
-                };
-              }
-              // lib.optionalAttrs config.plugins.avante.enable {
-                avante = {
-                  module = "blink-cmp-avante";
-                  name = "Avante";
+              };
+              ripgrep = lib.mkIf config.plugins.blink-ripgrep.enable {
+                name = "Ripgrep";
+                module = "blink-ripgrep";
+                async = true;
+                score_offset = 1;
+              };
+              spell = lib.mkIf config.plugins.blink-cmp-spell.enable {
+                name = "Spell";
+                module = "blink-cmp-spell";
+                score_offset = 1;
+              };
+              nerdfont = lib.mkIf (lib.elem pkgs.vimPlugins.blink-nerdfont-nvim config.extraPlugins) {
+                module = "blink-nerdfont";
+                name = "Nerd Fonts";
+                score_offset = 15;
+                opts = {
+                  insert = true;
                 };
               };
+              easy-dotnet = lib.mkIf config.plugins.easy-dotnet.enable {
+                module = "easy-dotnet.completion.blink";
+                name = "easy-dotnet";
+                async = true;
+                score_offset = 1000;
+                enabled.__raw = ''
+                  function()
+                    return vim.bo.filetype == "xml"
+                  end
+                '';
+              };
+              avante = lib.mkIf config.plugins.avante.enable {
+                module = "blink-cmp-avante";
+                name = "Avante";
+                enabled.__raw = ''
+                  function()
+                    return vim.bo.filetype == 'AvanteInput'
+                  end
+                '';
+              };
+            };
           };
         };
       };
@@ -242,20 +275,6 @@
       blink-copilot.enable = true;
       blink-emoji.enable = true;
       blink-ripgrep.enable = true;
-
-      blink-compat = {
-        enable = true;
-
-        settings = {
-          # When wanted
-          # debug = true;
-          # NOTE: apparently just doesn't work without using lazy...
-          # impersonate_nvim_cmp = true;
-        };
-      };
     }
-    (lib.mkIf config.plugins.blink-cmp.enable {
-      cmp-calc.enable = true;
-    })
   ];
 }

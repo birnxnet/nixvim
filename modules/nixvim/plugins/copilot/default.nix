@@ -1,19 +1,32 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   imports = [
     ./migrateNixvimPlugin.nix
     ./migrateNixvimTests.nix
   ];
 
+  extraPlugins = lib.optionals (config.plugins.copilot-lua.enable && config.plugins.lualine.enable) (
+    with pkgs.vimPlugins;
+    [
+      copilot-lualine
+    ]
+  );
+
   plugins = {
     copilot-lua = {
       enable = true;
 
-      lazyLoad.settings.event = [ "DeferredUIEnter" ];
+      lazyLoad.settings.event = [ "InsertEnter" ];
 
       settings = {
         panel.enabled = !config.plugins.blink-cmp-copilot.enable;
         suggestion.enabled = !config.plugins.blink-cmp-copilot.enable;
+        lsp_binary = lib.getExe pkgs.copilot-language-server;
       };
     };
 
