@@ -1,7 +1,18 @@
 { flake }:
-_final: super: {
-  inherit (flake.inputs.nixpkgs-master.legacyPackages.${super.stdenv.system})
+_final: prev:
+let
+  nixpkgs-master-packages = flake.inputs.nixpkgs-master.legacyPackages.${prev.stdenv.system};
+  # my-packages = flake.packages.${prev.stdenv.system};
+  inherit (nixpkgs-master-packages) vimPlugins;
+in
+{
+  inherit (nixpkgs-master-packages)
     luaPackages
-    vimPlugins
+    neovim-unwrapped
     ;
+  vimPlugins = vimPlugins // {
+    #
+    # Specific package overlays need to go in here to not get ignored
+    #
+  };
 }

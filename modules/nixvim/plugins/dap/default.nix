@@ -5,82 +5,134 @@
   ...
 }:
 {
+  imports = [
+    ./bash.nix
+    ./dotnet.nix
+    ./javascript.nix
+    ./lua.nix
+  ];
+
   extraPackages =
     with pkgs;
     [
       coreutils
       lldb
-      netcoredbg
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       gdb
-      bashdb
     ];
-
-  #   extraPlugins = with pkgs.vimPlugins; [ nvim-gdb ];
-
-  globals = {
-    dotnet_build_project.__raw = ''
-      function()
-        local default_path = vim.fn.getcwd() .. '/'
-
-        if vim.g['dotnet_last_proj_path'] ~= nil then
-            default_path = vim.g['dotnet_last_proj_path']
-        end
-
-        local path = vim.fn.input('Path to your *proj file', default_path, 'file')
-
-        vim.g['dotnet_last_proj_path'] = path
-
-        local cmd = 'dotnet build -c Debug ' .. path .. ' > /dev/null'
-
-        print("")
-        print('Cmd to execute: ' .. cmd)
-
-        local f = os.execute(cmd)
-
-        if f == 0 then
-            print('\nBuild: ✔️ ')
-        else
-            print('\nBuild: ❌ (code: ' .. f .. ')')
-        end
-      end
-    '';
-
-    dotnet_get_dll_path.__raw = ''
-      function()
-        local request = function()
-            return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
-        end
-
-        if vim.g['dotnet_last_dll_path'] == nil then
-            vim.g['dotnet_last_dll_path'] = request()
-        else
-            if vim.fn.confirm('Do you want to change the path to dll?\n' .. vim.g['dotnet_last_dll_path'], '&yes\n&no', 2) == 1 then
-                vim.g['dotnet_last_dll_path'] = request()
-            end
-        end
-
-        return vim.g['dotnet_last_dll_path']
-      end
-    '';
-  };
 
   plugins = {
     dap = {
       enable = true;
 
       lazyLoad.settings = {
-        cmd = [
-          "DapContinue"
-          "DapNew"
+        # NOTE: Couldn't get lazy loading to work any other way...
+        # Hate plugins that require this verbosity for lazy load
+        keys = [
+          {
+            __unkeyed-1 = "<leader>db";
+            __unkeyed-2.__raw = ''
+              function() require('dap').toggle_breakpoint() end
+            '';
+            desc = "Breakpoint toggle";
+          }
+          {
+            __unkeyed-1 = "<leader>dc";
+            __unkeyed-2.__raw = ''
+              function() require('dap').continue() end
+            '';
+            desc = "Continue Debugging (Start)";
+          }
+          {
+            __unkeyed-1 = "<leader>dC";
+            __unkeyed-2.__raw = ''
+              function() require('dap').run_to_cursor() end
+            '';
+            desc = "Run to cursor";
+          }
+          {
+            __unkeyed-1 = "<leader>dg";
+            __unkeyed-2.__raw = ''
+              function() require('dap').goto_() end
+            '';
+            desc = "Go to line (no execute)";
+          }
+          {
+            __unkeyed-1 = "<leader>di";
+            __unkeyed-2.__raw = ''
+              function() require('dap').step_into() end
+            '';
+            desc = "Step Into";
+          }
+          {
+            __unkeyed-1 = "<leader>dj";
+            __unkeyed-2.__raw = ''
+              function() require('dap').down() end
+            '';
+            desc = "Down";
+          }
+          {
+            __unkeyed-1 = "<leader>dk";
+            __unkeyed-2.__raw = ''
+              function() require('dap').up() end
+            '';
+            desc = "Up";
+          }
+          {
+            __unkeyed-1 = "<leader>dl";
+            __unkeyed-2.__raw = ''
+              function() require('dap').run_last() end
+            '';
+            desc = "Run Last";
+          }
+          {
+            __unkeyed-1 = "<leader>do";
+            __unkeyed-2.__raw = ''
+              function() require('dap').step_out() end
+            '';
+            desc = "Step Out";
+          }
+          {
+            __unkeyed-1 = "<leader>dO";
+            __unkeyed-2.__raw = ''
+              function() require('dap').step_over() end
+            '';
+            desc = "Step Over";
+          }
+          {
+            __unkeyed-1 = "<leader>dp";
+            __unkeyed-2.__raw = ''
+              function() require('dap').pause() end
+            '';
+            desc = "Pause";
+          }
+          {
+            __unkeyed-1 = "<leader>dr";
+            __unkeyed-2.__raw = ''
+              function() require('dap').repl.toggle() end
+            '';
+            desc = "Toggle REPL";
+          }
+          {
+            __unkeyed-1 = "<leader>ds";
+            __unkeyed-2.__raw = ''
+              function() require('dap').session() end
+            '';
+            desc = "Session";
+          }
+          {
+            __unkeyed-1 = "<leader>dt";
+            __unkeyed-2.__raw = ''
+              function() require('dap').terminate() end
+            '';
+            desc = "Terminate Debugging";
+          }
         ];
       };
 
       adapters = {
         executables = {
-          bashdb = lib.mkIf pkgs.stdenv.isLinux { command = lib.getExe pkgs.bashdb; };
-
           cppdbg = {
             command = "gdb";
             args = [
@@ -99,16 +151,6 @@
 
           lldb = {
             command = lib.getExe' pkgs.lldb "lldb-dap";
-          };
-
-          coreclr = {
-            command = lib.getExe pkgs.netcoredbg;
-            args = [ "--interpreter=vscode" ];
-          };
-
-          netcoredbg = {
-            command = lib.getExe pkgs.netcoredbg;
-            args = [ "--interpreter=vscode" ];
           };
         };
 
@@ -143,22 +185,6 @@
             stopOnEntry = false;
           };
 
-          coreclr-config = {
-            type = "coreclr";
-            name = "launch - netcoredbg";
-            request = "launch";
-            program.__raw = ''
-              function()
-                if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
-                  vim.g.dotnet_build_project()
-                end
-
-                return vim.g.dotnet_get_dll_path()
-              end
-            '';
-            cwd = ''''${workspaceFolder}'';
-          };
-
           gdb-config = {
             inherit program;
             name = "Launch (GDB)";
@@ -176,15 +202,13 @@
             cwd = ''''${workspaceFolder}'';
             stopOnEntry = false;
           };
-
-          netcoredb-config = coreclr-config;
         in
         {
           c =
             [
               lldb-config
             ]
-            ++ lib.optionals pkgs.stdenv.isLinux [
+            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               gdb-config
             ];
 
@@ -193,50 +217,19 @@
               codelldb-config
               lldb-config
             ]
-            ++ lib.optionals pkgs.stdenv.isLinux [
+            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               gdb-config
             ];
 
-          cs = [
-            coreclr-config
-            netcoredb-config
-          ];
-
-          fsharp = [
-            coreclr-config
-            netcoredb-config
-          ];
-
-          rust =
+          rust = lib.mkIf (!config.plugins.rustaceanvim.enable) (
             [
               codelldb-config
               lldb-config
             ]
-            ++ lib.optionals pkgs.stdenv.isLinux [
+            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
               gdb-config
-            ];
-
-          sh = lib.optionals pkgs.stdenv.isLinux [
-            {
-              type = "bashdb";
-              request = "launch";
-              name = "Launch (BashDB)";
-              showDebugOutput = true;
-              pathBashdb = "${lib.getExe pkgs.bashdb}";
-              pathBashdbLib = "${pkgs.bashdb}/share/basdhb/lib/";
-              trace = true;
-              file = ''''${file}'';
-              program = ''''${file}'';
-              cwd = ''''${workspaceFolder}'';
-              pathCat = "cat";
-              pathBash = "${lib.getExe pkgs.bash}";
-              pathMkfifo = "mkfifo";
-              pathPkill = "pkill";
-              args = { };
-              env = { };
-              terminalKind = "integrated";
-            }
-          ];
+            ]
+          );
         };
 
       signs = {
@@ -246,7 +239,7 @@
         };
         dapBreakpointCondition = {
           text = "";
-          texthl = "dapBreakpointCondition";
+          texthl = "DapBreakpointCondition";
         };
         dapBreakpointRejected = {
           text = "";
@@ -262,6 +255,11 @@
         };
       };
     };
+    dap-go = {
+      enable = true;
+      settings.delve.path = "${lib.getExe pkgs.delve}";
+    };
+    dap-python.enable = true;
 
     which-key.settings.spec = lib.optionals config.plugins.dap.enable [
       {
@@ -273,70 +271,124 @@
     ];
   };
 
-  keymaps = lib.optionals config.plugins.dap.enable [
+  keymaps = lib.optionals (config.plugins.dap.enable && !config.plugins.dap.lazyLoad.enable) [
     {
       mode = "n";
       key = "<leader>db";
-      action = "<CMD>DapToggleBreakpoint<CR>";
+      # action = "<CMD>DapToggleBreakpoint<CR>";
+      action = "<CMD>lua require('dap').toggle_breakpoint()<CR>";
       options = {
         desc = "Breakpoint toggle";
-        silent = true;
       };
     }
     {
       mode = "n";
       key = "<leader>dc";
-      action = "<CMD>DapContinue<CR>";
+      # action = "<CMD>DapContinue<CR>";
+      action = "<CMD>lua require('dap').continue()<CR>";
       options = {
         desc = "Continue Debugging (Start)";
-        silent = true;
       };
     }
     {
       mode = "n";
-      key = "<leader>dh";
-      action.__raw = ''
-        function() require("dap.ui.widgets").hover() end
-      '';
+      key = "<leader>dC";
+      action = "<CMD>lua require('dap').run_to_cursor()<CR>";
       options = {
-        desc = "Debugger Hover";
-        silent = true;
+        desc = "Run to cursor";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dg";
+      action = "<CMD>lua require('dap').goto_()<CR>";
+      options = {
+        desc = "Go to line (no execute)";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>di";
+      # action = "<CMD>DapStepInto<CR>";
+      action = "<CMD>lua require('dap').step_into()<CR>";
+      options = {
+        desc = "Step Into";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dj";
+      action = "<CMD>lua require('dap').down()<CR>";
+      options = {
+        desc = "Down";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dk";
+      action = "<CMD>lua require('dap').up()<CR>";
+      options = {
+        desc = "Up";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dl";
+      action = "<CMD>lua require('dap').run_last()<CR>";
+      options = {
+        desc = "Run Last";
       };
     }
     {
       mode = "n";
       key = "<leader>do";
-      action = "<CMD>DapStepOut<CR>";
+      # action = "<CMD>DapStepOut<CR>";
+      action = "<CMD>lua require('dap').step_out()<CR>";
       options = {
         desc = "Step Out";
-        silent = true;
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dO";
+      # action = "<CMD>DapStepOver<CR>";
+      action = "<CMD>lua require('dap').step_over()<CR>";
+      options = {
+        desc = "Step Over";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dp";
+      action = "<CMD>lua require('dap').pause()<CR>";
+      options = {
+        desc = "Pause";
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>dr";
+      # action = "<CMD>DapToggleRepl<CR>";
+      action = "<CMD>lua require('dap').repl.toggle()<CR>";
+      options = {
+        desc = "Toggle REPL";
       };
     }
     {
       mode = "n";
       key = "<leader>ds";
-      action = "<CMD>DapStepOver<CR>";
+      action = "<CMD>lua require('dap').session()<CR>";
       options = {
-        desc = "Step Over";
-        silent = true;
-      };
-    }
-    {
-      mode = "n";
-      key = "<leader>dS";
-      action = "<CMD>DapStepInto<CR>";
-      options = {
-        desc = "Step Into";
-        silent = true;
+        desc = "Session";
       };
     }
     {
       mode = "n";
       key = "<leader>dt";
-      action = "<CMD>DapTerminate<CR>";
+      # action = "<CMD>DapTerminate<CR>";
+      action = "<CMD>lua require('dap').terminate()<CR>";
       options = {
         desc = "Terminate Debugging";
-        silent = true;
       };
     }
   ];

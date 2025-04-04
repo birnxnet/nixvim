@@ -11,7 +11,8 @@
       lazyLoad.settings = {
         before.__raw = ''
           function()
-            require('lz.n').trigger_load('nvim-dap')
+            require('lz.n').trigger_load('nvim-dap', {})
+            require('lz.n').trigger_load('nvim-dap-virtual-text', {})
           end
         '';
         keys = [
@@ -37,6 +38,25 @@
         # icon = " ";
       }
     ];
+
+    dap.luaConfig.pre =
+      lib.mkIf config.plugins.dap-ui.enable
+        # Lua
+        ''
+          -- DEBUG LISTENERS
+          require("dap").listeners.before.attach.dapui_config = function()
+            require("dapui").open()
+          end
+          require("dap").listeners.before.launch.dapui_config = function()
+            require("dapui").open()
+          end
+          require("dap").listeners.before.event_terminated.dapui_config = function()
+            require("dapui").close()
+          end
+          require("dap").listeners.before.event_exited.dapui_config = function()
+            require("dapui").close()
+          end
+        '';
   };
 
   keymaps = lib.optionals config.plugins.dap-ui.enable [
@@ -66,7 +86,18 @@
         silent = true;
       };
     }
-    (lib.mkIf (!config.plugins.lz-n.enable) {
+    {
+      mode = "n";
+      key = "<leader>dh";
+      action.__raw = ''
+        function() require("dap.ui.widgets").hover() end
+      '';
+      options = {
+        desc = "Hover";
+        silent = true;
+      };
+    }
+    (lib.mkIf (!config.plugins.dap-ui.lazyLoad.enable) {
       mode = "n";
       key = "<leader>du";
       action.__raw = ''

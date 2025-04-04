@@ -25,7 +25,6 @@
 
   plugins = {
     lsp-format.enable = !config.plugins.conform-nvim.enable && config.plugins.lsp.enable;
-    lsp-lines.enable = config.plugins.lsp.enable;
     lsp-signature.enable = config.plugins.lsp.enable;
 
     lsp = {
@@ -35,9 +34,6 @@
       keymaps = {
         silent = true;
         diagnostic = {
-          # Navigate in diagnostics
-          "<leader>l[" = "goto_prev";
-          "<leader>l]" = "goto_next";
           "<leader>lH" = "open_float";
         };
 
@@ -74,11 +70,7 @@
           ];
 
         lspBuf =
-          {
-            "<leader>lh" = "hover";
-            "<leader>lr" = "rename";
-          }
-          // lib.optionalAttrs (!config.plugins.conform-nvim.enable) { "<leader>lf" = "format"; }
+          lib.optionalAttrs (!config.plugins.conform-nvim.enable) { "<leader>lf" = "format"; }
           // lib.optionalAttrs (!config.plugins.fzf-lua.enable) { "<leader>la" = "code_action"; }
           //
             lib.optionalAttrs
@@ -91,8 +83,6 @@
               )
               {
                 "<leader>ld" = "definition";
-                "<leader>li" = "implementation";
-                "<leader>lD" = "references";
                 "<leader>lt" = "type_definition";
               };
       };
@@ -119,6 +109,7 @@
           package = pkgs.gdtoolkit_4;
         };
 
+        gopls.enable = true;
         html.enable = true;
         java_language_server.enable = !config.plugins.nvim-jdtls.enable;
         jdtls.enable = !config.plugins.nvim-jdtls.enable;
