@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins.toggleterm = {
     enable = true;
 
@@ -27,7 +30,8 @@
         desc = "Open Terminal";
       };
     }
-    (lib.mkIf
+    (
+      lib.mkIf
       (
         !config.plugins.snacks.enable
         || (config.plugins.snacks.enable && !config.plugins.snacks.settings.lazygit.enabled)
@@ -48,7 +52,8 @@
         };
       }
     )
-    (lib.mkIf
+    (
+      lib.mkIf
       (
         !config.plugins.snacks.enable
         || (config.plugins.snacks.enable && !config.plugins.snacks.settings.lazygit.enabled)

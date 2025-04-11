@@ -1,8 +1,4 @@
-{
-  config,
-  ...
-}:
-{
+{config, ...}: {
   plugins = {
     lsp = {
       servers = {

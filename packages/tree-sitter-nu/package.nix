@@ -1,4 +1,4 @@
-{ pkgs }:
+{pkgs}:
 pkgs.tree-sitter.buildGrammar rec {
   language = "nu";
   version = "c10340b5bb3789f69182acf8f34c3d4fc24d2fe1";

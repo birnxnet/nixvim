@@ -5,8 +5,7 @@
     lazyLoad.settings.ft = "help";
 
     settings = {
-
-      buf_ignore = [ ];
+      buf_ignore = [];
 
       mode = [
         "n"

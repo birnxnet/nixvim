@@ -1,5 +1,8 @@
-{ lib, config, ... }:
 {
+  lib,
+  config,
+  ...
+}: {
   plugins = {
     comment-box = {
       enable = true;

@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   imports = [
     ./bash.nix
     ./dotnet.nix
@@ -12,8 +11,7 @@
     ./lua.nix
   ];
 
-  extraPackages =
-    with pkgs;
+  extraPackages = with pkgs;
     [
       coreutils
       lldb
@@ -168,69 +166,67 @@
         };
       };
 
-      configurations =
-        let
-          program.__raw = ''
-            function()
-                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
-            end
-          '';
+      configurations = let
+        program.__raw = ''
+          function()
+              return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', "file")
+          end
+        '';
 
-          codelldb-config = {
-            inherit program;
-            name = "Launch (CodeLLDB)";
-            type = "codelldb";
-            request = "launch";
-            cwd = ''''${workspaceFolder}'';
-            stopOnEntry = false;
-          };
-
-          gdb-config = {
-            inherit program;
-            name = "Launch (GDB)";
-            type = "gdb";
-            request = "launch";
-            cwd = ''''${workspaceFolder}'';
-            stopOnEntry = false;
-          };
-
-          lldb-config = {
-            inherit program;
-            name = "Launch (LLDB)";
-            type = "lldb";
-            request = "launch";
-            cwd = ''''${workspaceFolder}'';
-            stopOnEntry = false;
-          };
-        in
-        {
-          c =
-            [
-              lldb-config
-            ]
-            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-              gdb-config
-            ];
-
-          cpp =
-            [
-              codelldb-config
-              lldb-config
-            ]
-            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-              gdb-config
-            ];
-
-          rust = lib.mkIf (!config.plugins.rustaceanvim.enable) (
-            [
-              codelldb-config
-              lldb-config
-            ]
-            ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-              gdb-config
-            ]
-          );
+        codelldb-config = {
+          inherit program;
+          name = "Launch (CodeLLDB)";
+          type = "codelldb";
+          request = "launch";
+          cwd = ''''${workspaceFolder}'';
+          stopOnEntry = false;
         };
+
+        gdb-config = {
+          inherit program;
+          name = "Launch (GDB)";
+          type = "gdb";
+          request = "launch";
+          cwd = ''''${workspaceFolder}'';
+          stopOnEntry = false;
+        };
+
+        lldb-config = {
+          inherit program;
+          name = "Launch (LLDB)";
+          type = "lldb";
+          request = "launch";
+          cwd = ''''${workspaceFolder}'';
+          stopOnEntry = false;
+        };
+      in {
+        c =
+          [
+            lldb-config
+          ]
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            gdb-config
+          ];
+
+        cpp =
+          [
+            codelldb-config
+            lldb-config
+          ]
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            gdb-config
+          ];
+
+        rust = lib.mkIf (!config.plugins.rustaceanvim.enable) (
+          [
+            codelldb-config
+            lldb-config
+          ]
+          ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            gdb-config
+          ]
+        );
+      };
 
       signs = {
         dapBreakpoint = {

@@ -1,12 +1,11 @@
-{ lib, inputs, ... }:
 {
+  lib,
+  inputs,
+  ...
+}: {
   imports = lib.optional (inputs.treefmt-nix ? flakeModule) inputs.treefmt-nix.flakeModule;
 
-  perSystem =
-    {
-      lib,
-      ...
-    }:
+  perSystem = {lib, ...}:
     lib.optionalAttrs (inputs.treefmt-nix ? flakeModule) {
       treefmt = {
         flakeCheck = true;
@@ -69,7 +68,7 @@
             "assets/*"
           ];
 
-          formatter.ruff-format.options = [ "--isolated" ];
+          formatter.ruff-format.options = ["--isolated"];
         };
       };
     };

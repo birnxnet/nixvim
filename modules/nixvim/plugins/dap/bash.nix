@@ -2,10 +2,8 @@
   lib,
   pkgs,
   ...
-}:
-{
-  extraPackages =
-    with pkgs;
+}: {
+  extraPackages = with pkgs;
     lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       bashdb
     ];
@@ -14,7 +12,7 @@
     dap = {
       adapters = {
         executables = {
-          bashdb = lib.mkIf pkgs.stdenv.hostPlatform.isLinux { command = lib.getExe pkgs.bashdb; };
+          bashdb = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {command = lib.getExe pkgs.bashdb;};
         };
       };
 
@@ -35,14 +33,12 @@
             pathBash = "${lib.getExe pkgs.bash}";
             pathMkfifo = "mkfifo";
             pathPkill = "pkill";
-            args = { };
-            env = { };
+            args = {};
+            env = {};
             terminalKind = "integrated";
           }
         ];
       };
-
     };
   };
-
 }

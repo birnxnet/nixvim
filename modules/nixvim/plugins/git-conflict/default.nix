@@ -4,8 +4,7 @@
   self,
   system,
   ...
-}:
-{
+}: {
   plugins = {
     git-conflict = {
       enable = true;

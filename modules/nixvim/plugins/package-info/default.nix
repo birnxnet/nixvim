@@ -1,11 +1,14 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins.package-info = {
     enable = true;
     enableTelescope = config.plugins.telescope.enable;
 
     lazyLoad.settings = {
-      event = [ "BufRead package.json" ];
+      event = ["BufRead package.json"];
     };
 
     settings = {

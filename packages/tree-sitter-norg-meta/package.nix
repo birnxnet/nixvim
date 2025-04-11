@@ -1,4 +1,4 @@
-{ pkgs }:
+{pkgs}:
 pkgs.tree-sitter.buildGrammar {
   language = "norg-meta";
   version = "0.1.0";

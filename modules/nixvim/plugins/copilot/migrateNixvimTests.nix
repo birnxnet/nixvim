@@ -64,7 +64,7 @@
                   };
                 };
              ```
-             should be 
+             should be
              ```nix
               settings.servers.leanls.enable = true;
              ```

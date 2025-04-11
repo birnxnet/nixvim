@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   plugins = {
     neotest = {
       enable = true;

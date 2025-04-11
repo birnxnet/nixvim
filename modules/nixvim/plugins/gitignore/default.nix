@@ -1,8 +1,10 @@
-{ config, lib, ... }:
-let
-  cfg = config.plugins.gitignore;
-in
 {
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.plugins.gitignore;
+in {
   plugins = {
     gitignore = {
       enable = true;

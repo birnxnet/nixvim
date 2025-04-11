@@ -1,8 +1,4 @@
-{
-  config,
-  ...
-}:
-{
+{config, ...}: {
   plugins.nerdy = {
     enable = true;
     enableTelescope = config.plugins.telescope.enable;

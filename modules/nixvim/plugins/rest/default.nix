@@ -1,5 +1,4 @@
-{ config, ... }:
-{
+{config, ...}: {
   plugins.rest.enable = config.plugins.treesitter.enable;
 
   # NOTE: Works with files with .http file extension / http filetype

@@ -1,5 +1,8 @@
-{ lib, config, ... }:
 {
+  lib,
+  config,
+  ...
+}: {
   plugins = {
     ccc = {
       enable = true;
@@ -15,7 +18,7 @@
           auto_enable = true;
           max_byte = 2 * 1024 * 1024;
           lsp = true;
-          filetypes = [ "colorPickerFts" ];
+          filetypes = ["colorPickerFts"];
         };
         pickers = [
           # Lua
@@ -34,7 +37,7 @@
         recognize = {
           output = true;
         };
-        inputs = [ "require('ccc').input.hsl" ];
+        inputs = ["require('ccc').input.hsl"];
         outputs = [
           # Lua
           "require('ccc').output.css_hsl"

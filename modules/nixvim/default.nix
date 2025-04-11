@@ -1,17 +1,19 @@
-{ lib, self, ... }:
-let
+{
+  lib,
+  self,
+  ...
+}: let
   inherit (builtins) readDir;
   inherit (lib.attrsets) foldlAttrs;
   inherit (lib.lists) optional;
   by-name = ./plugins;
-in
-{
+in {
   # Plugin by-name directory imports
   imports =
     (foldlAttrs (
       prev: name: type:
-      prev ++ optional (type == "directory") (by-name + "/${name}")
-    ) [ ] (readDir by-name))
+        prev ++ optional (type == "directory") (by-name + "/${name}")
+    ) [] (readDir by-name))
     ++ [
       ./autocommands.nix
       ./diagnostics.nix

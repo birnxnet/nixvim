@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   extraPackages = with pkgs; [
     netcoredbg
   ];
@@ -63,36 +62,35 @@
         executables = {
           coreclr = {
             command = lib.getExe pkgs.netcoredbg;
-            args = [ "--interpreter=vscode" ];
+            args = ["--interpreter=vscode"];
           };
 
           netcoredbg = {
             command = lib.getExe pkgs.netcoredbg;
-            args = [ "--interpreter=vscode" ];
+            args = ["--interpreter=vscode"];
           };
         };
       };
 
-      configurations =
-        let
-          coreclr-config = {
-            type = "coreclr";
-            name = "launch - netcoredbg";
-            request = "launch";
-            program.__raw = ''
-              function()
-                if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
-                  vim.g.dotnet_build_project()
-                end
-
-                return vim.g.dotnet_get_dll_path()
+      configurations = let
+        coreclr-config = {
+          type = "coreclr";
+          name = "launch - netcoredbg";
+          request = "launch";
+          program.__raw = ''
+            function()
+              if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
+                vim.g.dotnet_build_project()
               end
-            '';
-            cwd = ''''${workspaceFolder}'';
-          };
 
-          netcoredb-config = coreclr-config;
-        in
+              return vim.g.dotnet_get_dll_path()
+            end
+          '';
+          cwd = ''''${workspaceFolder}'';
+        };
+
+        netcoredb-config = coreclr-config;
+      in
         lib.mkIf (!config.plugins.easy-dotnet.enable) {
           cs = [
             coreclr-config

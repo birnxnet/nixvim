@@ -3,9 +3,8 @@
   lib,
   pkgs,
   ...
-}:
-{
-  extraPlugins = with pkgs.vimPlugins; [ cpsm ];
+}: {
+  extraPlugins = with pkgs.vimPlugins; [cpsm];
 
   plugins = {
     wilder = {
@@ -57,7 +56,8 @@
         ''
       ];
 
-      renderer = # Lua
+      renderer =
+        # Lua
         ''
           wilder.renderer_mux({
             [':'] = wilder.popupmenu_renderer(

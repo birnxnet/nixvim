@@ -1,11 +1,14 @@
-{ lib, config, ... }:
 {
+  lib,
+  config,
+  ...
+}: {
   plugins = {
     mini = {
       enable = true;
 
       modules = {
-        git = { };
+        git = {};
       };
     };
   };

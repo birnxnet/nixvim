@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
       pname = "vs-tasks.nvim";
@@ -16,7 +15,7 @@
         sha256 = "0k00n8p9cy2g98a8g5dg9c67sa0hx1shjj0hhpw8yac4rj5dbgdl";
       };
       meta.homepage = "https://github.com/EthanJWright/vs-tasks.nvim/";
-      meta.hydraPlatforms = [ ];
+      meta.hydraPlatforms = [];
       dependencies = with pkgs.vimPlugins; [
         plenary-nvim
         telescope-nvim

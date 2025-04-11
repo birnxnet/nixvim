@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   plugins = {
     lsp = {
       servers = {
@@ -12,7 +11,7 @@
           enable = !config.plugins.lsp.servers.nixd.enable;
           settings = {
             formatting = {
-              command = [ "${lib.getExe pkgs.nixfmt-rfc-style}" ];
+              command = ["${lib.getExe pkgs.nixfmt-rfc-style}"];
             };
             nix = {
               flake = {

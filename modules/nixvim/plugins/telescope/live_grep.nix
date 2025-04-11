@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-{
+}: {
   plugins.telescope = {
     extensions = {
       live-grep-args.enable = true;
@@ -18,7 +17,8 @@
   };
 
   keymaps = lib.mkIf config.plugins.telescope.enable [
-    (lib.mkIf
+    (
+      lib.mkIf
       (config.plugins.telescope.extensions.live-grep-args.enable && !config.plugins.fzf-lua.enable)
       {
         mode = "n";

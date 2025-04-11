@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   imports = [
     ./migrateNixvimPlugin.nix
     ./migrateNixvimTests.nix
@@ -21,7 +20,7 @@
     copilot-lua = {
       enable = true;
 
-      lazyLoad.settings.event = [ "InsertEnter" ];
+      lazyLoad.settings.event = ["InsertEnter"];
 
       settings = {
         panel.enabled = !config.plugins.blink-cmp-copilot.enable;

@@ -1,8 +1,4 @@
-{
-  pkgs,
-  ...
-}:
-{
+{pkgs, ...}: {
   extraPlugins = [
     pkgs.vimPlugins.whitespace-nvim
   ];

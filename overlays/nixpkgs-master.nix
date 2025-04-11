@@ -1,17 +1,17 @@
-{ flake }:
-_final: prev:
-let
+{flake}: _final: prev: let
   nixpkgs-master-packages = flake.inputs.nixpkgs-master.legacyPackages.${prev.stdenv.system};
   # my-packages = flake.packages.${prev.stdenv.system};
   inherit (nixpkgs-master-packages) vimPlugins;
-in
-{
-  inherit (nixpkgs-master-packages)
+in {
+  inherit
+    (nixpkgs-master-packages)
     luaPackages
     ;
-  vimPlugins = vimPlugins // {
-    #
-    # Specific package overlays need to go in here to not get ignored
-    #
-  };
+  vimPlugins =
+    vimPlugins
+    // {
+      #
+      # Specific package overlays need to go in here to not get ignored
+      #
+    };
 }

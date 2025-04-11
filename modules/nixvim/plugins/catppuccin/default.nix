@@ -3,42 +3,41 @@
     bufferline.settings = {
       # NOTE: fixes colorscheme with transparent_background
       # and better contrast selected tabs
-      highlights =
-        let
-          commonBgColor = "#363a4f";
-          commonFgColor = "#1e2030";
+      highlights = let
+        commonBgColor = "#363a4f";
+        commonFgColor = "#1e2030";
 
-          commonSelectedAttrs = {
-            bg = commonBgColor;
-          };
+        commonSelectedAttrs = {
+          bg = commonBgColor;
+        };
 
-          # Define a set with common selected attributes
-          selectedAttrsSet = builtins.listToAttrs (
-            map
-              (name: {
-                inherit name;
-                value = commonSelectedAttrs;
-              })
-              [
-                # "separator_selected" # Handled uniquely
-                "buffer_selected"
-                "tab_selected"
-                "numbers_selected"
-                "close_button_selected"
-                "duplicate_selected"
-                "modified_selected"
-                "info_selected"
-                "warning_selected"
-                "error_selected"
-                "hint_selected"
-                "diagnostic_selected"
-                "info_diagnostic_selected"
-                "warning_diagnostic_selected"
-                "error_diagnostic_selected"
-                "hint_diagnostic_selected"
-              ]
-          );
-        in
+        # Define a set with common selected attributes
+        selectedAttrsSet = builtins.listToAttrs (
+          map
+          (name: {
+            inherit name;
+            value = commonSelectedAttrs;
+          })
+          [
+            # "separator_selected" # Handled uniquely
+            "buffer_selected"
+            "tab_selected"
+            "numbers_selected"
+            "close_button_selected"
+            "duplicate_selected"
+            "modified_selected"
+            "info_selected"
+            "warning_selected"
+            "error_selected"
+            "hint_selected"
+            "diagnostic_selected"
+            "info_diagnostic_selected"
+            "warning_diagnostic_selected"
+            "error_diagnostic_selected"
+            "hint_diagnostic_selected"
+          ]
+        );
+      in
         # Merge the common selected attributes with the unique attributes
         selectedAttrsSet
         // {
@@ -100,16 +99,16 @@
         native_lsp = {
           enabled = true;
           virtual_text = {
-            errors = [ "italic" ];
-            hints = [ "italic" ];
-            warnings = [ "italic" ];
-            information = [ "italic" ];
+            errors = ["italic"];
+            hints = ["italic"];
+            warnings = ["italic"];
+            information = ["italic"];
           };
           underlines = {
-            errors = [ "underline" ];
-            hints = [ "underline" ];
-            warnings = [ "underline" ];
-            information = [ "underline" ];
+            errors = ["underline"];
+            hints = ["underline"];
+            warnings = ["underline"];
+            information = ["underline"];
           };
           inlay_hints = {
             background = true;

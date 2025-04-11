@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-{
+}: {
   plugins.telescope = {
     extensions = {
       undo = {

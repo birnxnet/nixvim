@@ -8,7 +8,7 @@ vimUtils.buildVimPlugin {
   src = inputs.snacks-nvim;
   version = inputs.snacks-nvim.shortRev;
 
-  dependencies = [ pkgs.vimPlugins.trouble-nvim ];
+  dependencies = [pkgs.vimPlugins.trouble-nvim];
 
   nvimSkipModule = [
     "snacks.dashboard"

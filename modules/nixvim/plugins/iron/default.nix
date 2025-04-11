@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   extraPlugins = with pkgs.vimPlugins; [
     iron-nvim
   ];
@@ -17,7 +16,8 @@
           "IronRepl"
           "IronReplHere"
         ];
-        after = # Lua
+        after =
+          # Lua
           ''
             function()
               require ("iron.core").setup({
@@ -62,16 +62,16 @@
 
   plugins.which-key.settings.spec =
     lib.optionals (builtins.elem pkgs.vimPlugins.iron-nvim config.extraPlugins)
-      [
-        {
-          __unkeyed-1 = "<leader>s";
-          group = "REPL Send";
-          icon = "󱠥";
-        }
-        {
-          __unkeyed-1 = "<leader>m";
-          group = "REPL Mark";
-          icon = "󱠥";
-        }
-      ];
+    [
+      {
+        __unkeyed-1 = "<leader>s";
+        group = "REPL Send";
+        icon = "󱠥";
+      }
+      {
+        __unkeyed-1 = "<leader>m";
+        group = "REPL Mark";
+        icon = "󱠥";
+      }
+    ];
 }

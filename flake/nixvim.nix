@@ -2,8 +2,7 @@
   inputs,
   self,
   ...
-}:
-{
+}: {
   imports = [
     inputs.nixvim.flakeModules.default
   ];
@@ -17,21 +16,19 @@
     default = ../modules/nixvim;
   };
 
-  perSystem =
-    { system, ... }:
-    {
-      nixvimConfigurations = {
-        khanelivim = inputs.nixvim.lib.evalNixvim {
-          inherit system;
+  perSystem = {system, ...}: {
+    nixvimConfigurations = {
+      khanelivim = inputs.nixvim.lib.evalNixvim {
+        inherit system;
 
-          extraSpecialArgs = {
-            inherit inputs system self;
-          };
-
-          modules = [
-            self.nixvimModules.default
-          ];
+        extraSpecialArgs = {
+          inherit inputs system self;
         };
+
+        modules = [
+          self.nixvimModules.default
+        ];
       };
     };
+  };
 }

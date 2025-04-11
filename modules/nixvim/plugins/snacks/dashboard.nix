@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins = {
     snacks = {
       enable = true;
@@ -112,7 +115,7 @@
                 end
               '';
             }
-            (lib.mkIf config.plugins.lazy.enable { section = "startup"; })
+            (lib.mkIf config.plugins.lazy.enable {section = "startup";})
           ];
         };
       };

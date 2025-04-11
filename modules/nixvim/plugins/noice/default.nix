@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins = {
     noice = {
       enable = true;
@@ -55,7 +58,7 @@
               pattern = "^:%s*he?l?p?%s+";
               icon = "󰋖";
             };
-            input = { };
+            input = {};
           };
         };
 

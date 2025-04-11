@@ -3,8 +3,7 @@
   lib,
   config,
   ...
-}:
-{
+}: {
   plugins = {
     codesnap = {
       enable = true;

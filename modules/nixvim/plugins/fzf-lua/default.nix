@@ -2,8 +2,7 @@
   lib,
   config,
   ...
-}:
-{
+}: {
   imports = [
     ./dap.nix
     ./git.nix
@@ -15,9 +14,11 @@
       enable = true;
       profile = "telescope";
 
-      lazyLoad.settings.cmd = [
-        "FzfLua"
-      ] ++ lib.optionals config.plugins.noice.enable [ "Noice fzf" ];
+      lazyLoad.settings.cmd =
+        [
+          "FzfLua"
+        ]
+        ++ lib.optionals config.plugins.noice.enable ["Noice fzf"];
 
       settings = {
         oldfiles = {
@@ -115,102 +116,101 @@
         };
       }
     ]
-    ++
-      lib.optionals
-        (
-          !config.plugins.snacks.enable
-          || (config.plugins.snacks.enable && !lib.hasAttr "picker" config.plugins.snacks.settings)
-        )
-        [
-          {
-            mode = "n";
-            key = "<leader>fa";
-            action = ''<cmd>FzfLua autocmds<CR>'';
-            options = {
-              desc = "Find autocmds";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fc";
-            action = ''<cmd>FzfLua commands<CR>'';
-            options = {
-              desc = "Find commands";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fC";
-            action.__raw = ''
-              function()
-                require("fzf-lua").files {
-                  prompt_title = "Config Files",
-                  cwd = vim.fn.stdpath "config",
-                  follow = true,
-                }
-              end
-            '';
-            options = {
-              desc = "Find config files";
-              silent = true;
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fd";
-            action = ''<cmd>FzfLua diagnostics_document<CR>'';
-            options = {
-              desc = "Find buffer diagnostics";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fD";
-            action = ''<cmd>FzfLua diagnostics_workspace<CR>'';
-            options = {
-              desc = "Find workspace diagnostics";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fh";
-            action = ''<cmd>FzfLua helptags<CR>'';
-            options = {
-              desc = "Find help tags";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fk";
-            action = ''<cmd>FzfLua keymaps<CR>'';
-            options = {
-              desc = "Find keymaps";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fr";
-            action = ''<cmd>FzfLua registers<CR>'';
-            options = {
-              desc = "Find registers";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fS";
-            action = ''<cmd>FzfLua spell_suggest<CR>'';
-            options = {
-              desc = "Find spelling suggestions";
-            };
-          }
-          {
-            mode = "n";
-            key = "<leader>fT";
-            action = ''<cmd>FzfLua colorschemes<CR>'';
-            options = {
-              desc = "Find theme";
-            };
-          }
-        ]
+    ++ lib.optionals
+    (
+      !config.plugins.snacks.enable
+      || (config.plugins.snacks.enable && !lib.hasAttr "picker" config.plugins.snacks.settings)
+    )
+    [
+      {
+        mode = "n";
+        key = "<leader>fa";
+        action = ''<cmd>FzfLua autocmds<CR>'';
+        options = {
+          desc = "Find autocmds";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fc";
+        action = ''<cmd>FzfLua commands<CR>'';
+        options = {
+          desc = "Find commands";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fC";
+        action.__raw = ''
+          function()
+            require("fzf-lua").files {
+              prompt_title = "Config Files",
+              cwd = vim.fn.stdpath "config",
+              follow = true,
+            }
+          end
+        '';
+        options = {
+          desc = "Find config files";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fd";
+        action = ''<cmd>FzfLua diagnostics_document<CR>'';
+        options = {
+          desc = "Find buffer diagnostics";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fD";
+        action = ''<cmd>FzfLua diagnostics_workspace<CR>'';
+        options = {
+          desc = "Find workspace diagnostics";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fh";
+        action = ''<cmd>FzfLua helptags<CR>'';
+        options = {
+          desc = "Find help tags";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fk";
+        action = ''<cmd>FzfLua keymaps<CR>'';
+        options = {
+          desc = "Find keymaps";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fr";
+        action = ''<cmd>FzfLua registers<CR>'';
+        options = {
+          desc = "Find registers";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fS";
+        action = ''<cmd>FzfLua spell_suggest<CR>'';
+        options = {
+          desc = "Find spelling suggestions";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fT";
+        action = ''<cmd>FzfLua colorschemes<CR>'';
+        options = {
+          desc = "Find theme";
+        };
+      }
+    ]
   );
 }

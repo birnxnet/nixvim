@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   # Not needed?
   # extraLuaPackages = ps: [
   #   ps.nlua
@@ -14,11 +13,12 @@
   # `nvim --cmd "lua init_debug=true"`
   extraConfigLuaPre =
     lib.mkOrder 2 # Lua
-      ''
-        if init_debug then
-          require"osv".launch({port=8086, blocking=true})
-        end
-      '';
+    
+    ''
+      if init_debug then
+        require"osv".launch({port=8086, blocking=true})
+      end
+    '';
 
   extraPlugins = with pkgs.vimPlugins; [
     one-small-step-for-vimkind
@@ -62,7 +62,7 @@
             type = "nlua";
             request = "attach";
             name = "Run this file";
-            start_neovim = { };
+            start_neovim = {};
           }
           {
             type = "nlua";

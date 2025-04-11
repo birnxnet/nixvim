@@ -3,8 +3,7 @@
   pkgs,
   config,
   ...
-}:
-{
+}: {
   plugins = {
     lint = {
       enable = true;
@@ -12,38 +11,38 @@
       lazyLoad.settings.event = "DeferredUIEnter";
 
       lintersByFt = {
-        bash = [ "shellcheck" ];
-        c = [ "clangtidy" ];
-        cmake = [ "cmakelint" ];
-        cpp = [ "clangtidy" ];
+        bash = ["shellcheck"];
+        c = ["clangtidy"];
+        cmake = ["cmakelint"];
+        cpp = ["clangtidy"];
         # TODO:
         # cs = [ "sonarlint" ];
-        css = lib.mkIf (!config.plugins.lsp.servers.stylelint_lsp.enable) [ "stylelint" ];
-        fish = [ "fish" ];
+        css = lib.mkIf (!config.plugins.lsp.servers.stylelint_lsp.enable) ["stylelint"];
+        fish = ["fish"];
         # TODO:
         # fsharp = [ "" ];
-        gdscript = [ "gdlint" ];
-        go = [ "golangcilint" ];
-        html = [ "htmlhint" ];
-        java = [ "checkstyle" ];
-        javascript = lib.mkIf (!config.plugins.lsp.servers.biome.enable) [ "biomejs" ];
-        json = [ "jsonlint" ];
-        lua = [ "luacheck" ];
-        make = [ "checkmake" ];
-        markdown = [ "markdownlint" ];
+        gdscript = ["gdlint"];
+        go = ["golangcilint"];
+        html = ["htmlhint"];
+        java = ["checkstyle"];
+        javascript = lib.mkIf (!config.plugins.lsp.servers.biome.enable) ["biomejs"];
+        json = ["jsonlint"];
+        lua = ["luacheck"];
+        make = ["checkmake"];
+        markdown = ["markdownlint"];
         # nix = [
         #   "deadnix"
         # ] ++ lib.optionals (!config.plugins.lsp.servers.statix.enable) [ "statix" ];
         # FIXME: causes ruff errors
         # python = [ "pylint" ];
-        rust = [ "clippy" ];
-        sh = [ "shellcheck" ];
-        sql = [ "sqlfluff" ];
-        swift = [ "swiftlint" ];
-        typescript = lib.mkIf (!config.plugins.lsp.servers.biome.enable) [ "biomejs" ];
+        rust = ["clippy"];
+        sh = ["shellcheck"];
+        sql = ["sqlfluff"];
+        swift = ["swiftlint"];
+        typescript = lib.mkIf (!config.plugins.lsp.servers.biome.enable) ["biomejs"];
         # TODO:
         # xml = [ "xmllint" ];
-        yaml = [ "yamllint" ];
+        yaml = ["yamllint"];
       };
 
       linters = {

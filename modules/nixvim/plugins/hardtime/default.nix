@@ -1,8 +1,10 @@
-{ config, lib, ... }:
-let
-  cfg = config.plugins.hardtime;
-in
 {
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.plugins.hardtime;
+in {
   globals.disable_hardtime = true;
 
   plugins = {

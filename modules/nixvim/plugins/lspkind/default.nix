@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins.lspkind = {
     inherit (config.plugins.lsp) enable;
 

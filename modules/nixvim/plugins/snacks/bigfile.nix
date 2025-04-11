@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-{
+}: {
   plugins = {
     snacks = {
       enable = true;

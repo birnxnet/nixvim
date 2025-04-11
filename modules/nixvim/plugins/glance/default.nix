@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-{
+}: {
   plugins = {
     glance = {
       enable = true;

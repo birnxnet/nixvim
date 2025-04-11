@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-{
+}: {
   imports = [
     ./file-browser.nix
     ./frecency.nix
@@ -19,7 +18,7 @@
     enable = true;
 
     lazyLoad.settings.cmd =
-      [ "Telescope" ]
+      ["Telescope"]
       ++ lib.optionals config.plugins.noice.enable [
         "Noice telescope"
       ];

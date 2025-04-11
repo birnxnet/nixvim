@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   autoCmd = [
     (lib.mkIf config.plugins.lsp.servers.helm_ls.enable {
       event = "FileType";

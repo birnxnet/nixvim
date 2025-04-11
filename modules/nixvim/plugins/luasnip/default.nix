@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins.luasnip = {
     enable =
       !config.plugins.mini.enable

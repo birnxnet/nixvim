@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   plugins = {
     codeium-nvim = {
       # TODO: properly disable only with copilot enabled

@@ -1,8 +1,10 @@
-{ config, lib, ... }:
-let
-  inherit (builtins) toJSON;
-in
 {
+  config,
+  lib,
+  ...
+}: let
+  inherit (builtins) toJSON;
+in {
   plugins = {
     gitsigns = {
       enable = true;

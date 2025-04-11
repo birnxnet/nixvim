@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   autoCmd = [
     # Remove trailing whitespace on save
     (lib.mkIf (!lib.elem "trim_whitespace" config.plugins.conform-nvim.settings.formatters_by_ft."_") {
@@ -8,14 +11,15 @@
     })
 
     # Handle performance on large files
-    (lib.mkIf
+    (
+      lib.mkIf
       (
         (!config.plugins.snacks.enable)
         || (config.plugins.snacks.enable && (!config.plugins.snacks.settings.bigfile.enabled))
       )
       {
         event = "BufEnter";
-        pattern = [ "*" ];
+        pattern = ["*"];
         callback.__raw = ''
           function()
             local buf_size_limit = 1024 * 1024 -- 1MB size limit

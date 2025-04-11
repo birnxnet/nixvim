@@ -1,5 +1,8 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   get_bufnrs.__raw = ''
     function()
       local buf_size_limit = 1024 * 1024 -- 1MB size limit
@@ -13,8 +16,7 @@ let
       return valid_bufs
     end
   '';
-in
-{
+in {
   plugins = {
     cmp = {
       enable = !config.plugins.blink-cmp.enable;
@@ -22,26 +24,35 @@ in
 
       settings = {
         mapping = {
-          "<C-d>" = # Lua
+          "<C-d>" =
+            # Lua
             "cmp.mapping.scroll_docs(-4)";
-          "<C-f>" = # Lua
+          "<C-f>" =
+            # Lua
             "cmp.mapping.scroll_docs(4)";
-          "<C-Space>" = # Lua
+          "<C-Space>" =
+            # Lua
             "cmp.mapping.complete()";
-          "<C-e>" = # Lua
+          "<C-e>" =
+            # Lua
             "cmp.mapping.close()";
-          "<Tab>" = # Lua
+          "<Tab>" =
+            # Lua
             "cmp.mapping(cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
-          "<S-Tab>" = # Lua
+          "<S-Tab>" =
+            # Lua
             "cmp.mapping(cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
-          "<CR>" = # Lua
+          "<CR>" =
+            # Lua
             "cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace })";
         };
 
-        preselect = # Lua
+        preselect =
+          # Lua
           "cmp.PreselectMode.None";
 
-        snippet.expand = # Lua
+        snippet.expand =
+          # Lua
           "function(args) require('luasnip').lsp_expand(args.body) end";
 
         sources = [
@@ -138,7 +149,7 @@ in
             name = "emoji";
             priority = 100;
           }
-          { name = "nixpkgs_maintainers"; }
+          {name = "nixpkgs_maintainers";}
         ];
 
         window = {

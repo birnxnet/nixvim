@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   autoCmd = lib.optionals config.plugins.neorg.enable [
     {
       event = "FileType";
@@ -26,7 +29,7 @@
       lazy_loading = true;
 
       load = {
-        "core.defaults" = lib.mkIf config.plugins.treesitter.enable { __empty = null; };
+        "core.defaults" = lib.mkIf config.plugins.treesitter.enable {__empty = null;};
 
         "core.keybinds".config.hook.__raw = ''
           function(keybinds)

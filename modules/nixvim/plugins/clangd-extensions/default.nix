@@ -1,5 +1,4 @@
-{ config, ... }:
-{
+{config, ...}: {
   plugins = {
     clangd-extensions = {
       lazyLoad.settings.cmd = [

@@ -4,8 +4,7 @@
   self,
   system,
   ...
-}:
-{
+}: {
   extraPlugins = [
     self.packages.${system}.tree-sitter-norg-meta
     self.packages.${system}.tree-sitter-nu
@@ -16,17 +15,20 @@
       enable = true;
 
       folding = true;
-      grammarPackages = config.plugins.treesitter.package.passthru.allGrammars ++ [
-        self.packages.${system}.tree-sitter-norg-meta
-        self.packages.${system}.tree-sitter-nu
-      ];
+      grammarPackages =
+        config.plugins.treesitter.package.passthru.allGrammars
+        ++ [
+          self.packages.${system}.tree-sitter-norg-meta
+          self.packages.${system}.tree-sitter-nu
+        ];
       nixvimInjections = true;
 
       settings = {
         highlight = {
           additional_vim_regex_highlighting = true;
           enable = true;
-          disable = # Lua
+          disable =
+            # Lua
             ''
               function(lang, bufnr)
                 return vim.api.nvim_buf_line_count(bufnr) > 10000

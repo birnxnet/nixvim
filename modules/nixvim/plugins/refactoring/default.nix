@@ -1,5 +1,8 @@
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   plugins = {
     refactoring = {
       enable = true;
@@ -98,22 +101,22 @@
       }
     ]
     ++ lib.optionals
-      (
-        config.plugins.telescope.enable && config.plugins.refactoring.enable && !config.plugins.lz-n.enable
-      )
-      [
-        {
-          mode = "n";
-          key = "<leader>fR";
-          action.__raw = ''
-            function()
-              require('telescope').extensions.refactoring.refactors()
-            end
-          '';
-          options = {
-            desc = "Refactoring";
-            silent = true;
-          };
-        }
-      ];
+    (
+      config.plugins.telescope.enable && config.plugins.refactoring.enable && !config.plugins.lz-n.enable
+    )
+    [
+      {
+        mode = "n";
+        key = "<leader>fR";
+        action.__raw = ''
+          function()
+            require('telescope').extensions.refactoring.refactors()
+          end
+        '';
+        options = {
+          desc = "Refactoring";
+          silent = true;
+        };
+      }
+    ];
 }

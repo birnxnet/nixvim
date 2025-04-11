@@ -3,14 +3,11 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # cfg = config.plugins.git-worktree;
-
   worktreeEnabled = builtins.elem pkgs.vimPlugins.git-worktree-nvim config.extraPlugins;
   worktreeTelescopeEnabled = worktreeEnabled && config.plugins.telescope.enable;
-in
-{
+in {
   extraConfigLua = ''
     local Hooks = require("git-worktree.hooks")
     local config = require('git-worktree.config')
@@ -26,7 +23,7 @@ in
     end)
   '';
 
-  extraPlugins = with pkgs.vimPlugins; [ git-worktree-nvim ];
+  extraPlugins = with pkgs.vimPlugins; [git-worktree-nvim];
 
   plugins = {
     # TODO: upstream nixpkg package change to use new fork
@@ -41,7 +38,7 @@ in
     #   # ];
     # };
 
-    telescope.enabledExtensions = lib.optionals worktreeTelescopeEnabled [ "git_worktree" ];
+    telescope.enabledExtensions = lib.optionals worktreeTelescopeEnabled ["git_worktree"];
 
     which-key.settings.spec = lib.optionals worktreeTelescopeEnabled [
       {
