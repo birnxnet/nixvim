@@ -2,12 +2,20 @@
 let
   cond.__raw = ''
     function()
-      local buf_size_limit = 1024 * 1024 -- 1MB size limit
-      if vim.api.nvim_buf_get_offset(0, vim.api.nvim_buf_line_count(0)) > buf_size_limit then
-        return false
+      local cache = {}
+      return function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        if cache[bufnr] == nil then
+          local buf_size = vim.api.nvim_buf_get_offset(bufnr, vim.api.nvim_buf_line_count(bufnr))
+          cache[bufnr] = buf_size < 1024 * 1024 -- 1MB limit
+          -- Clear cache on buffer unload
+          vim.api.nvim_create_autocmd("BufUnload", {
+            buffer = bufnr,
+            callback = function() cache[bufnr] = nil end,
+          })
+        end
+        return cache[bufnr]
       end
-
-      return true
     end
   '';
 in
@@ -15,7 +23,11 @@ in
   plugins.lualine = {
     enable = true;
 
-    lazyLoad.settings.event = "DeferredUIEnter";
+    lazyLoad.settings.event = [
+      "VimEnter"
+      "BufReadPost"
+      "BufNewFile"
+    ];
 
     settings = {
       options = {
@@ -34,6 +46,7 @@ in
           __unkeyed-12 = "dapui_console";
           __unkeyed-13 = "dashboard";
           __unkeyed-14 = "snacks_dashboard";
+          __unkeyed-15 = "AvanteSelectedFiles";
           winbar = [
             "aerial"
             "dap-repl"
@@ -57,9 +70,32 @@ in
 
         lualine_x = [
           { __raw = ''Snacks.profiler.status()''; }
-          "diagnostics"
+          {
+            __unkeyed-1 = "diagnostics";
+            sources = [
+              "nvim_lsp"
+              "nvim_diagnostic"
+              "nvim_workspace_diagnostic"
+            ];
+            diagnostics_color = {
+              error = {
+                fg = "#ed8796";
+              };
+              warn = {
+                fg = "#eed49f";
+              };
+              info = {
+                fg = "#8aadf4";
+              };
+              hint = {
+                fg = "#a6da95";
+              };
+            };
+            colored = true;
+          }
 
           # Show active language server
+          (lib.optionalString config.plugins.copilot-lua.enable "copilot")
           {
             __unkeyed-1.__raw = ''
               function()
@@ -87,29 +123,21 @@ in
         ];
 
         lualine_y = [
-          {
+          (lib.mkIf config.plugins.aerial.enable {
             __unkeyed-1 = "aerial";
-            inherit cond;
+            colored = true;
 
-            # -- The separator to be used to separate symbols in status line.
-            sep = " ) ";
-
-            # -- The number of symbols to render top-down. In order to render only 'N' last
-            # -- symbols, negative numbers may be supplied. For instance, 'depth = -1' can
-            # -- be used in order to render only current symbol.
-            depth.__raw = "nil";
-
-            # -- When 'dense' mode is on, icons are not rendered near their symbols. Only
-            # -- a single icon that represents the kind of current symbol is rendered at
-            # -- the beginning of status line.
-            dense = false;
-
-            # -- The separator to be used to separate symbols in dense mode.
+            depth = 3; # Limit depth for better performance
+            dense = true; # Better for performance
             dense_sep = ".";
 
-            # -- Color the symbol icons.
-            colored = true;
-          }
+            cond.__raw = ''
+              function()
+                local aerial_avail, aerial = pcall(require, "aerial")
+                return aerial_avail and aerial.has_symbols()
+              end
+            '';
+          })
         ];
 
         lualine_z = [
@@ -135,10 +163,16 @@ in
 
       winbar = {
         lualine_c = [
-          {
+          (lib.mkIf config.plugins.navic.enable {
             __unkeyed-1 = "navic";
             inherit cond;
-          }
+            color_correction = "static";
+            navic_opts = {
+              highlight = true;
+              depth_limit = 5;
+              depth_limit_indicator = "...";
+            };
+          })
         ];
 
         # TODO: Need to dynamically hide/show component so navic takes precedence on smaller width
@@ -149,6 +183,11 @@ in
             path = 3;
             # Shorten path names to fit navic component
             shorting_target = 150;
+            symbols = {
+              modified = "";
+              readonly = "";
+              newfile = "";
+            };
           }
         ];
       };

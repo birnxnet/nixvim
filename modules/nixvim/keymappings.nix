@@ -2,6 +2,7 @@
   config,
   helpers,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -281,23 +282,6 @@
                 };
               };
 
-              "<leader>uW" = {
-                action.__raw = ''
-                  function ()
-                    if (not vim.g.whitespace_character_enabled) then
-                      vim.cmd('set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣')
-                      vim.cmd('set list')
-                    else
-                      vim.cmd('set nolist')
-                    end
-                    vim.g.whitespace_character_enabled = not vim.g.whitespace_character_enabled
-                    vim.notify(string.format("Showing white space characters %s", bool2str(vim.g.whitespace_character_enabled), "info"))
-                  end'';
-                options = {
-                  desc = "White space character toggle";
-                };
-              };
-
               "<leader>uh" = {
                 action.__raw = ''
                   function ()
@@ -311,6 +295,24 @@
                 };
               };
             }
+            // (lib.optionalAttrs (!builtins.elem pkgs.vimPlugins.visual-whitespace-nvim config.extraPlugins) {
+              "<leader>uW" = {
+                action.__raw = ''
+                  function ()
+                    if (not vim.g.whitespace_character_enabled) then
+                      vim.cmd('set listchars=eol:¬,tab:>→,trail:~,extends:>,precedes:<,space:·')
+                      vim.cmd('set list')
+                    else
+                      vim.cmd('set nolist')
+                    end
+                    vim.g.whitespace_character_enabled = not vim.g.whitespace_character_enabled
+                    vim.notify(string.format("Showing white space characters %s", bool2str(vim.g.whitespace_character_enabled), "info"))
+                  end'';
+                options = {
+                  desc = "White space character toggle";
+                };
+              };
+            })
             // (lib.optionalAttrs
               (
                 !config.plugins.snacks.enable
