@@ -51,8 +51,8 @@
               };
 
               #navigate to left/right window
-              action = "<cmd><C-U>TmuxNavigateLeft<cr>";
               "<C-h>" = {
+                action = "<cmd><C-U>TmuxNavigateLeft<cr>";
                 options = {
                   desc = "Left window";
                 };
