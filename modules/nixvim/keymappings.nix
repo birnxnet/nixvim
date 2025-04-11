@@ -49,19 +49,31 @@
                 action = "<cmd>b#<CR>";
               };
 
-              # navigate to left/right window
-              # "<C-h>" = {
-              #   action = "<C-w>h";
-              #   options = {
-              #     desc = "Left window";
-              #   };
-              # };
-              # "<C-l>" = {
-              #   action = "<C-w>l";
-              #   options = {
-              #     desc = "Right window";
-              #   };
-              # };
+              #navigate to left/right window
+              action = "<cmd><C-U>TmuxNavigateLeft<cr>";
+              "<C-h>" = {
+                options = {
+                  desc = "Left window";
+                };
+              };
+              "<C-l>" = {
+                action = "<cmd><C-U>TmuxNavigateRight<cr>";
+                options = {
+                  desc = "Right window";
+                };
+              };
+              "<C-k>" = {
+                action = "<cmd><C-U>TmuxNavigateUp<cr>";
+                options = {
+                  desc = "Upper window";
+                };
+              };
+              "<C-j>" = {
+                action = "<cmd><C-U>TmuxNavigateDown<cr>";
+                options = {
+                  desc = "Lower window";
+                };
+              };
               "<leader>." = {
                 action = "<C-w>j";
                 options = {
